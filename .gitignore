@@ -1,0 +1,5 @@
+# Ignora TUTTO il contenuto della cartella del progetto (codice e risultati)
+first_classwork/
+
+# NON ignorare la cartella appunti (la vogliamo includere)
+!Appunti_IDM_25/
