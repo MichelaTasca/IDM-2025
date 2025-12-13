@@ -3,7 +3,7 @@ Questa repository raccoglie tutto il materiale di studio e di progetto sviluppat
 
 ---
 
-##Contenuti Principali
+## Contenuti Principali
 
 | Cartella | Descrizione |
 | :--- | :--- |
@@ -12,6 +12,6 @@ Questa repository raccoglie tutto il materiale di studio e di progetto sviluppat
 
 ---
 
-## Disclaimer (Appunti)
+## Disclaimer
 
 I file presenti nella cartella `Appunti_IDM_25/` sono materiali di studio personali e non ufficiali, derivati dalle slide del professore. 
