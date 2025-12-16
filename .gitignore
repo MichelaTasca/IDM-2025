@@ -1,5 +1,8 @@
-# Ignora TUTTO il contenuto della cartella del progetto (codice e risultati)
-first_classwork/
+# Ignora il file del dataset
+AnonymizedFidelity.csv
 
-# NON ignorare la cartella appunti (la vogliamo includere)
-!Appunti_IDM_25/
+# Ignora la cartella dei risultati (che viene generata ad ogni esecuzione)
+first_classwork/results/
+
+# IGNORA LA CARTELLA DI INSTALLAZIONE JAVA
+first_classwork/src/oracleJdk-25/
