@@ -10,7 +10,7 @@ class AssociationRules:
     """
     def __init__(self, df):
         self.df = df
-        self.level_col = 'descr_liv3' # Livello richiesto per le regole di associazione
+        self.level_col = 'descr_liv4' # Livello richiesto per le regole di associazione
         self.results_dir = '../results/'
         os.makedirs(self.results_dir, exist_ok=True)
 

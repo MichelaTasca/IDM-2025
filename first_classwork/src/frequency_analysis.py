@@ -1,6 +1,5 @@
 import pandas as pd
 import matplotlib
-matplotlib.use('Agg') # Forza l'uso del backend non interattivo (Agg) per migliorare la stabilità e la velocità nel salvataggio su file
 import matplotlib.pyplot as plt
 import os
 
