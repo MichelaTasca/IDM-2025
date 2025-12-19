@@ -1,0 +1,158 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[italian]{babel}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{subcaption}
+\usepackage{xcolor}
+
+\title{Relazione Progetto IDM-2025: \\ Analisi dei Pattern di Acquisto Retail}
+\author{Michela Maria Tasca - 1000084036}
+
+\begin{document}
+
+
+\maketitle
+\tableofcontents
+
+\section{Introduzione}
+L'obiettivo del progetto è l'analisi di un dataset transazionale composto da circa 2.3 milioni di record. L'analisi copre l'esplorazione dei dati, il mining di regole di associazione e la segmentazione della clientela tramite tecniche di riduzione dimensionale e clustering.
+
+\section{Istruzioni per la Riproducibilità}
+
+\subsection{Ambiente di Esecuzione e Requisiti}
+Per garantire il corretto funzionamento degli algoritmi, è necessaria l'installazione delle seguenti librerie:
+\begin{itemize}
+    \item \texttt{pandas}, \texttt{numpy}: per la manipolazione e il calcolo numerico;
+    \item \texttt{matplotlib}: per la generazione degli output grafici;
+    \item \texttt{scikit-learn}: per l'implementazione della SVD e degli algoritmi di preprocessing;
+    \item \texttt{mlxtend}: per il mining delle regole di associazione (Apriori e FP-Growth);
+    \item \texttt{hdbscan}: per l'analisi di clustering basata sulla densità.
+\end{itemize}
+
+\subsection{Configurazione e Avvio}
+Il codice segue rigorosamente il paradigma \textit{Object-Oriented} ed è organizzato secondo la struttura di directory richiesta. Per riprodurre i risultati:
+\begin{enumerate}
+    \item Posizionare il dataset originale nominato \texttt{AnonymizedFidelity.csv} nella cartella radice \textit{first\_classwork/}.
+    \item Accedere alla directory dei sorgenti: \texttt{cd first\_classwork/src/}.
+    \item Eseguire lo script principale: \texttt{python main.py}.
+\end{enumerate}
+
+Il sistema gestisce automaticamente la creazione della directory \textit{results/}, all'interno della quale verranno salvati tutti i grafici in formato \texttt{.png} e i risultati tabellari in formato \texttt{.csv}.
+
+\subsection{Note sulle Prestazioni e Tempi di Esecuzione}
+Data la mole del dataset, l'esecuzione dell'algoritmo \textit{Apriori} sarà computazionalmente costosa.
+
+
+ Inoltre, l'intera pipeline di analisi richiede tempi di elaborazione significativi. In particolare:
+\begin{itemize}
+    \item \textbf{Tempo stimato}: Circa 10 minuti per il completamento di tutte le Task.
+    \item \textbf{Configurazione}: Per ottimizzare il rapporto tra tempi di calcolo e qualità dei risultati, il parametro \texttt{min\_support} è stato impostato a $0.15$ per le regole di associazione. Qualora l'ambiente di esecuzione dovesse riscontrare errori di memoria (\textit{MemoryError}), si consiglia di elevare tale soglia a $0.05$ nella chiamata al metodo \texttt{assoc\_analyzer.run\_task3\_4}.
+    \item \textbf{Comportamento atteso}: È normale che il sistema sembri inattivo durante le fasi di \textit{Frequent Itemset Mining} e di costruzione della matrice Cliente-Prodotto. Il programma termina correttamente generando tutti gli output previsti nella cartella \texttt{results/}.
+\end{itemize}
+
+
+\section{Preprocessing e Analisi Esplorativa (Task 1 \& 2)}
+Il dataset è stato preventivamente pulito rimuovendo i record relativi a resi (quantità negative) ed escludendo le voci ``shopper'', non rilevanti ai fini dell'analisi.
+
+\subsection{Stratificazione Temporale}
+Sono state eseguite analisi di frequenza stratificate per:
+\begin{itemize}
+    \item \textbf{Mesi}: Suddivisione in tre range (Gen-Mag, Mag-Set, Ott-Dic).
+    \item \textbf{Fasce Orarie}: Mattina (08:30-12:30), Pranzo (12:30-16:30) e Sera (16:30-20:30).
+\end{itemize}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{GLOBALE_top5_freq_LIV1.png}
+    \caption{Visualizzazione delle prime 5 categorie (livello 1)}
+    \label{fig:globale_liv1}
+\end{figure}
+
+Dall'analisi globale del primo livello di merchandising (Fig. \ref{fig:globale_liv1}), emerge chiaramente la natura alimentare del dataset, con le categorie \textit{Drogheria Alimentare} e \textit{Fresco} che rappresentano oltre la metà delle transazioni complessive. 
+\newline
+
+Passando alla stratificazione oraria, l'analisi comparativa dei 12 grafici relativi alle frequenze assolute di vendita, suddivise per slot temporali (Mattina, Pranzo, Sera) e livelli gerarchici (LIV1-LIV4), permette di trarre le seguenti conclusioni:
+
+\begin{itemize}
+    \item \textbf{Stabilità del paniere macro (LIV1 e LIV2):} Si osserva una forte resilienza delle categorie principali rispetto all'orario. \textit{Drogheria Alimentare} e \textit{Fresco} dominano costantemente il LIV1. Analogamente, al LIV2, le categorie \textit{Formaggi}, \textit{Salumi} e \textit{Verdura} mantengono le prime posizioni in tutti gli slot.
+    
+    \item \textbf{Variazioni volumetriche:} Lo slot \textbf{Sera} registra i volumi di righe prodotto più elevati in assoluto (picco di $\approx 275.000$ per la Drogheria), indicando che la maggior parte delle transazioni si concentra nella fascia finale della giornata. Lo slot \textbf{Pranzo} risulta essere quello con la frequenza minore.
+
+    \item \textbf{Comportamenti specifici per slot (LIV3 e LIV4):}
+    \begin{itemize}
+        \item \textbf{Mattina:} È l'unico slot in cui la categoria \textit{Panetteria Pane} (LIV4) appare come leader indiscussa, a conferma di un acquisto mirato al prodotto fresco di giornata.
+        \item \textbf{Sera:} Al LIV3 compare la categoria \textit{Latte UHT}, assente nella top 5 degli altri slot. Questo suggerisce una tendenza all'acquisto di scorte per la colazione del giorno successivo durante la spesa serale.
+        \item \textbf{Pranzo:} Si osserva una rilevanza maggiore della categoria \textit{Avicolo} al LIV4, probabilmente legata alla preparazione dei pasti pomeridiani.
+    \end{itemize}
+
+    \item \textbf{Prodotti Anchor:} La \textit{Pasta di Semola} (LIV3) e il \textit{Prosciutto Cotto} (LIV4) mostrano una presenza costante nelle top 5 di ogni fascia oraria, qualificandosi come prodotti ad alta rotazione indipendentemente dalle abitudini temporali del consumatore.
+\end{itemize}
+\begin{figure}[htbp]
+    \centering
+    \begin{subfigure}[b]{0.454\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{SLOT_3_SERA_top5_freq_LIV1.png}
+        \caption{Picco volumi (Sera - LIV1)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{SLOT_1_MATTINA_top5_freq_LIV4.png}
+        \caption{Focus Panetteria (Mattina - LIV4)}
+    \end{subfigure}
+    \caption{Selezione di grafici rappresentativi delle dinamiche di acquisto.}
+\end{figure}
+
+\section{Regole di Associazione (Task 3 \& 4)}
+
+
+Per l'estrazione delle regole di associazione sono stati applicati gli algoritmi \textit{Apriori} e \textit{FP-Growth}. Entrambi hanno prodotto un set di 52 regole significative, confermando la coerenza dei risultati. L'analisi si è focalizzata sulle regole con i valori di \textbf{Lift} e \textbf{Confidence} più elevati.
+
+\subsection{Interpretazione delle Metriche}
+\begin{itemize}
+    \item \textbf{Supporto:} indica la rarità o comunanza della combinazione nel dataset.
+    \item \textbf{Confidence:} esprime la forza del legame predittivo tra antecedente e conseguente.
+    \item \textbf{Lift:} misura quanto la presenza dell'antecedente aumenti la probabilità di acquisto del conseguente rispetto al caso di acquisti indipendenti.
+\end{itemize}
+
+\subsection{Risultati}
+I risultati prodotti dai due algoritmi sono identici: questo è corretto, poiché i due algoritmi differiscono solo per l'efficienza computazionale, ma producono lo stesso set di regole a parità di parametri (supporto minimo $0.015$ e confidenza minima $0.5$).
+Le regole estratte evidenziano comportamenti d'acquisto ben definiti:
+
+\begin{enumerate}
+    \item \textbf{Segmento Pasta:} La regola $\{ \text{Pasta Lunga, Normale} \} \Rightarrow \{ \text{Pasta Corta} \}$ presenta il Lift più alto ($4.58$) e una confidenza del $61\%$. Questo suggerisce che il consumatore medio tende a fare scorta di diversi formati di pasta nello stesso atto d'acquisto.
+    \item \textbf{Segmento Macelleria:} Si osserva una forte correlazione tra tagli di carne diversi, in particolare $\{ \text{Suino, Normale} \} \Rightarrow \{ \text{Bovino} \}$ con un Lift di $3.34$. Questo pattern indica una spesa programmata per il consumo settimanale.
+    \item \textbf{Salumi e Gastronomia:} Il \textit{Prosciutto Cotto} appare frequentemente come prodotto \textit{pivot} che si associa sia alla pasta che ad altri affettati, confermandosi un prodotto \textit{entry-level} nel carrello della spesa.
+\end{enumerate}
+
+In conlusione, è possibile affermare che i valori di Lift superiori a 3 per le top-rule indicano che le associazioni trovate non sono casuali, ma riflettono abitudini consolidate.
+
+
+\section{Clustering e Riduzione Dimensionale (Task 5)}
+Questa fase ha rappresentato la sfida tecnica maggiore a causa dell'estrema sparsità della matrice Cliente-Prodotto ($9375 \times 19422$).
+
+\subsection{Evoluzione della Metodologia}
+Inizialmente è stata testata la \textbf{PCA} (Principal Component Analysis), che tuttavia ha mostrato limiti evidenti:
+\begin{itemize}
+    \item Una varianza spiegata di soli 0.17 con 100 componenti.
+    \item Un clustering K-Means che convergeva verso un unico cluster dominante (99.9\% dei clienti), fallendo nella segmentazione.
+\end{itemize}
+
+\subsection{Soluzione Finale: Truncated SVD e HDBSCAN}
+Per gestire meglio la natura sparsa dei dati, si è passati all'utilizzo della \textbf{Truncated SVD} (Latent Semantic Analysis) abbinata a una normalizzazione tramite \textbf{MaxAbsScaler}.
+\begin{itemize}
+    \item \textbf{MaxAbsScaler}: Utilizzato per scalare i dati preservando gli zeri della matrice originale.
+    \item \textbf{HDBSCAN}: Scelto al posto di K-Means per la sua capacità di gestire il rumore e identificare cluster di forma arbitraria basati sulla densità.
+    \item \textbf{Risultato}: L'analisi ha isolato 2 cluster densi, classificando la restante parte dei dati (8747 punti) come rumore statistico, confermando l'eterogeneità dei pattern d'acquisto.
+\end{itemize}
+
+
+
+\section{Conclusioni}
+L'integrazione di tecniche diverse ha permesso di evidenziare che, nonostante esistano delle regole di associazione forti tra prodotti, la base clienti globale risulta estremamente varia, rendendo la segmentazione rigida meno efficace rispetto a un'analisi basata sulla densità.
+
+\end{document}
