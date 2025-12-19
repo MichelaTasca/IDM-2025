@@ -8,7 +8,7 @@ Questa repository raccoglie tutto il materiale di studio e di progetto sviluppat
 | Cartella | Descrizione |
 | :--- | :--- |
 | `Appunti_IDM_25/` | **Documentazione Teorica.** Contiene le note personali di studio e i riassunti dei concetti chiave trattati a lezione e nelle slide del professore Di Maria. |
-| `first_classwork/` | **Progetto di Analisi Pratica.** Contiene l'intero sviluppo del progetto di *classwork*, inclusi il codice sorgente e i risultati generati. |
+| `first_classwork/` | **Progetto di Analisi Pratica.** Contiene l'intero sviluppo del primo classwork, inclusi il codice sorgente e la relazione finale. |
 
 ---
 
