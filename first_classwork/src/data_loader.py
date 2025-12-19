@@ -13,7 +13,7 @@ class DataLoader:
     def load_data(self):
         """Carica il dataset da file CSV/TSV."""
         try:
-            # Uso il punto e virgola (;) come separatore e una codifica robusta
+            # Uso la virgola come separatore e cp1252 per l'encoding
             self.df = pd.read_csv(self.file_path, sep=',', encoding='cp1252', on_bad_lines='skip')
             print(f"Dataset caricato. Righe iniziali: {len(self.df)}")
             return self.df
@@ -32,10 +32,10 @@ class DataLoader:
         if self.df is None:
             return None
 
-        # 1. Pulizia ESTREMA dei nomi delle colonne
+        # 1. Pulizia dei nomi delle colonne
         self.df.columns = self.df.columns.str.strip()
         
-        # Pulizia estrema con regex: rimuove tutti i caratteri non-parola e non-spazio, 
+        # Pulizia rimuove tutti i caratteri non-parola e non-spazio, 
         # rende minuscolo e converte gli spazi in underscore.
         self.df.columns = (
             self.df.columns
@@ -45,9 +45,9 @@ class DataLoader:
             .str.strip('_')
         )
         
-        # 2. Controllo di coerenza sulla colonna chiave 'descr_prod' (causa del NoneType)
+        # 2. Controllo di coerenza sulla colonna chiave 'descr_prod'
         
-        # Cerchiamo colonne che contengono 'descr_prod' (per catturare eventuali errori di codifica)
+        # Cerchiamo colonne che contengono 'descr_prod'
         possible_cols = [col for col in self.df.columns if 'descr_prod' in col]   
         
         # 3. Escludere 'shoppers' dalla colonna 'descr_prod' (Task 1)

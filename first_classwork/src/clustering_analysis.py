@@ -6,7 +6,6 @@ import matplotlib.pyplot as plt
 import os
 import numpy as np
 import matplotlib
-matplotlib.use('Agg')
 
 RESULTS_DIR = '../results/'
 
@@ -33,7 +32,7 @@ class ClusteringAnalysis:
         """Applica Truncated SVD (LSA) al posto della PCA."""
         print(f"Esecuzione Truncated SVD (n={n_components})...")
         
-        # Per dati sparsi si usa MaxAbsScaler invece di StandardScaler
+        # Per dati sparsi si usa MaxAbsScaler
         scaler = MaxAbsScaler()
         data_scaled = scaler.fit_transform(data_matrix)
         

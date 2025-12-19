@@ -3,11 +3,6 @@ from frequency_analysis import FrequencyAnalysis
 from association_rules import AssociationRules
 from clustering_analysis import ClusteringAnalysis
 
-# Dipendenze:
-# Devi installare pandas, matplotlib, scikit-learn, mlxtend
-# In terminale: pip install pandas matplotlib scikit-learn mlxtend
-# pip install hdbscan
-
 def main():
     file_path = "../AnonymizedFidelity.csv" 
     
@@ -31,7 +26,7 @@ def main():
     # 3. Esecuzione Task 3 & 4: Regole di Associazione (Livello 3)
     # IMPORTANTE: Us0 min_support=0.02 per evitare problemi di memoria
     assoc_analyzer = AssociationRules(cleaned_data)
-    assoc_analyzer.run_task3_4(min_support=0.02, min_confidence=0.5) 
+    assoc_analyzer.run_task3_4(min_support=0.015, min_confidence=0.5) 
     print("\n--- FINE Esecuzione Task 3/4 ---")
     
     # 4. Esecuzione Task 5: PCA e Clustering (Cliente x Prodotto)

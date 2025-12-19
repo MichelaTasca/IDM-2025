@@ -10,7 +10,7 @@ class AssociationRules:
     """
     def __init__(self, df):
         self.df = df
-        self.level_col = 'descr_liv4' # Livello richiesto per le regole di associazione
+        self.level_col = 'descr_liv4' 
         self.results_dir = '../results/'
         os.makedirs(self.results_dir, exist_ok=True)
 
@@ -71,9 +71,6 @@ class AssociationRules:
 
     def run_task3_4(self, min_support=0.05, min_confidence=0.5):
         """Esegue le Task 3 (APRIORI) e 4 (FP-Growth)."""
-        
-        # Nota sul Supporto: min_support=0.001 (0.1%) è il valore di partenza. 
-        # Potrebbe essere necessario aumentarlo (es. 0.005) se il calcolo è troppo lento o la memoria non è sufficiente.
         
         try:
             df_encoded = self.prepare_transactions()
